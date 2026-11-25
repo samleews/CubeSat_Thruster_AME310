@@ -28,7 +28,7 @@ def audit_conservation(res: dict, gas: IdealGas) -> dict:
 
     # 2. Mass Balance: (m_init - m_final) vs integral(m_dot dt)
     dm_tank = m_init - m_final
-    m_expelled_trapz = _trapz(res["m_dot"], res["t"])
+    m_expelled_trapz = _trapz(res["mdot"], res["t"])
     mass_residual_kg = abs(dm_tank - m_expelled_trapz)
     mass_rel_err = mass_residual_kg / m_init if m_init > 0 else 0.0
 

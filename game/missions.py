@@ -1,132 +1,93 @@
-from dataclasses import dataclass
-from typing import Dict, Any
 from thermo_engine.hohmann import compute_hohmann_targets
 
-
-@dataclass(frozen=True)
-class MissionSpec:
-    id: str
-    name: str
-    difficulty: str
-    brief: str
-    alt_start_km: float
-    alt_end_km: float
-    # Locked CubeSat Bus Parameters
-    V_tank_L: float
-    P_init_MPa: float
-    T_init_K: float
-    m_dry_kg: float
-    # Engineering Pass Criteria
-    min_temp_K: float
-    min_prop_left_pct: float
-    max_peak_thrust_N: float  # Attitude-control structural/pointing limit
-
-
-MISSIONS: Dict[str, MissionSpec] = {
-    "Mission 1: LEO Orbit Raise (400 → 450 km)": MissionSpec(
-        id="m1",
-        name="Mission 1: LEO Orbit Raise (400 → 450 km)",
-        difficulty="Standard",
-        brief=(
-            "Raise a 6U CubeSat from 400 km to 450 km circular orbit. "
-            "Keep the propellant above the 230 K valve-freeze limit and retain at least 25% propellant reserve."
+MISSIONS = {
+    "Mission 1 — LEO Hohmann Orbit Raising": {
+        "type": "hohmann",
+        "alt1_km": 400.0,
+        "alt2_km": 450.0,
+        "m_dry": 12.0,
+        "V_tank_L": 4.0,
+        "P_init_MPa": 20.0,
+        "T_init_K": 295.0,
+        "briefing": (
+            "Raise a **12 kg CubeSat** (locked 4.0 L tank at 20 MPa) from a **400 km** circular orbit to **450 km** "
+            "using a two-burn Hohmann transfer (Burn 1 → 46.4 min Coast → Burn 2). Tune your propellant, nozzle, "
+            "and thermal controls to complete both burns without freezing the thruster valve or exhausting your reserve."
         ),
-        alt_start_km=400.0,
-        alt_end_km=450.0,
-        V_tank_L=4.0,
-        P_init_MPa=20.0,
-        T_init_K=295.0,
-        m_dry_kg=12.0,
-        min_temp_K=230.0,
-        min_prop_left_pct=25.0,
-        max_peak_thrust_N=60.0,
-    ),
-    "Mission 2: Precision Attitude-Limited Transfer (400 → 475 km)": MissionSpec(
-        id="m2",
-        name="Mission 2: Precision Attitude-Limited Transfer (400 → 475 km)",
-        difficulty="Hard",
-        brief=(
-            "Delicate optical payload limits peak thrust to 15.0 N. "
-            "Use pressure regulation or throat sizing plus thermal management to reach 475 km without freezing the valve."
+        "constraints": {
+            "min_T_K": 230.0,
+            "min_prop_margin_pct": 10.0,
+            "max_heater_W": 50.0,
+        },
+    },
+    "Mission 2 — High-Altitude Hohmann (Power-Limited)": {
+        "type": "hohmann",
+        "alt1_km": 400.0,
+        "alt2_km": 500.0,
+        "m_dry": 10.0,
+        "V_tank_L": 3.5,
+        "P_init_MPa": 20.0,
+        "T_init_K": 290.0,
+        "briefing": (
+            "Transfer a **10 kg CubeSat** (locked 3.5 L tank at 20 MPa) from **400 km** to **500 km** (higher $\\Delta v$ demand). "
+            "Your solar array limits the Resistojet Heater to **≤ 35 W**. Use coast-phase thermal recovery "
+            "and propellant selection wisely to avoid valve freezing."
         ),
-        alt_start_km=400.0,
-        alt_end_km=475.0,
-        V_tank_L=4.0,
-        P_init_MPa=20.0,
-        T_init_K=290.0,
-        m_dry_kg=14.0,
-        min_temp_K=230.0,
-        min_prop_left_pct=15.0,
-        max_peak_thrust_N=15.0,
-    ),
-    "Mission 3: Tight-Volume 3U MicroSat (380 → 460 km)": MissionSpec(
-        id="m3",
-        name="Mission 3: Tight-Volume 3U MicroSat (380 → 460 km)",
-        difficulty="Expert",
-        brief=(
-            "A volume-starved 2.5 L tank must deliver a full 80 km orbit raise. "
-            "Optimize propellant choice, resistojet heating, and coast-phase thermal recovery to survive Burn 2."
+        "constraints": {
+            "min_T_K": 230.0,
+            "min_prop_margin_pct": 5.0,
+            "max_heater_W": 35.0,
+        },
+    },
+    "Mission 3 — Rapid Burn Freeze Guard": {
+        "type": "hohmann",
+        "alt1_km": 400.0,
+        "alt2_km": 435.0,
+        "m_dry": 15.0,
+        "V_tank_L": 3.0,
+        "P_init_MPa": 22.0,
+        "T_init_K": 290.0,
+        "briefing": (
+            "Execute a tight **400 km → 435 km** transfer for a heavy **15 kg CubeSat** (locked 3.0 L tank at 22 MPa) "
+            "while keeping tank temperature strictly above **245 K** (strict seal margin) and finishing with **≥ 15%** propellant remaining."
         ),
-        alt_start_km=380.0,
-        alt_end_km=460.0,
-        V_tank_L=2.5,
-        P_init_MPa=22.0,
-        T_init_K=290.0,
-        m_dry_kg=10.0,
-        min_temp_K=230.0,
-        min_prop_left_pct=10.0,
-        max_peak_thrust_N=25.0,
-    ),
+        "constraints": {
+            "min_T_K": 245.0,
+            "min_prop_margin_pct": 15.0,
+            "max_heater_W": 60.0,
+        },
+    },
 }
 
 
-def evaluate_mission(mission: MissionSpec, res: Dict[str, Any]) -> Dict[str, Any]:
-    """Grade a completed Hohmann mission simulation against engineering criteria."""
-    targets = compute_hohmann_targets(mission.alt_start_km, mission.alt_end_km)
-    dv_target = targets["dv1_m_s"] + targets["dv2_m_s"]
-
+def evaluate_mission(mission_key: str, res: dict, targets: dict, Q_heater: float, cons: dict) -> dict:
+    """Evaluate mission pass/fail criteria and compute an engineering-based score."""
+    c = MISSIONS[mission_key]["constraints"]
+    dv_target = targets["dv_total_m_s"]
     dv_achieved = float(res["dv"][-1])
+    dv_pct = 100.0 * dv_achieved / max(1e-6, dv_target)
+
     min_T = float(res["T"].min())
-    prop_left_pct = 100.0 * float(res["m"][-1]) / float(res["m_init"])
-    peak_F = float(res["F"].max())
+    prop_margin_pct = 100.0 * float(res["m"][-1]) / max(1e-9, float(res["m_init"]))
 
     checks = [
-        {
-            "Criterion": "Target Orbit Δv Achieved",
-            "Requirement": f"≥ {dv_target - 0.15:.2f} m/s",
-            "Measured": f"{dv_achieved:.2f} m/s",
-            "Passed": dv_achieved >= (dv_target - 0.15),
-        },
-        {
-            "Criterion": "Valve Freeze Prevention",
-            "Requirement": f"Min T ≥ {mission.min_temp_K:.0f} K",
-            "Measured": f"{min_T:.1f} K",
-            "Passed": min_T >= mission.min_temp_K,
-        },
-        {
-            "Criterion": "Propellant Reserve Margin",
-            "Requirement": f"≥ {mission.min_prop_left_pct:.0f}% remaining",
-            "Measured": f"{prop_left_pct:.1f}%",
-            "Passed": prop_left_pct >= mission.min_prop_left_pct,
-        },
-        {
-            "Criterion": "Attitude-Control Thrust Cap",
-            "Requirement": f"Peak F ≤ {mission.max_peak_thrust_N:.1f} N",
-            "Measured": f"{peak_F:.2f} N",
-            "Passed": peak_F <= mission.max_peak_thrust_N,
-        },
+        ("Target Δv Achieved (≥ 99%)", dv_achieved >= 0.99 * dv_target, f"{dv_achieved:.2f} / {dv_target:.2f} m/s ({dv_pct:.1f}%)"),
+        (f"Valve Freeze Guard (T ≥ {c['min_T_K']:.0f} K)", min_T >= c["min_T_K"], f"Min T = {min_T:.1f} K"),
+        (f"Propellant Margin (≥ {c['min_prop_margin_pct']:.0f}%)", prop_margin_pct >= c["min_prop_margin_pct"], f"Remaining = {prop_margin_pct:.1f}%"),
+        (f"Heater Power Budget (≤ {c['max_heater_W']:.0f} W)", Q_heater <= c["max_heater_W"], f"Heater = {Q_heater:.0f} W"),
+        ("First Law Conservation (< 1e-5)", cons["passed"], f"Rel Err = {cons['energy_rel_err']:.2e}"),
     ]
 
-    passed_all = all(c["Passed"] for c in checks)
-    score = int(round(100.0 * sum(1 for c in checks if c["Passed"]) / len(checks)))
+    passed_all = all(item[1] for item in checks)
+    # Engineering score: 70 pts for passing constraints + up to 30 pts for propellant & thermal efficiency
+    base_pts = 70.0 * (sum(1 for item in checks if item[1]) / len(checks))
+    eff_pts = min(15.0, prop_margin_pct * 0.5) + min(15.0, max(0.0, (min_T - c["min_T_K"]) * 0.3))
+    score = round(base_pts + (eff_pts if passed_all else 0.0), 1)
 
     return {
         "passed_all": passed_all,
         "score": score,
         "checks": checks,
-        "dv_target": dv_target,
-        "dv_achieved": dv_achieved,
+        "prop_margin_pct": prop_margin_pct,
         "min_T": min_T,
-        "prop_left_pct": prop_left_pct,
-        "peak_F": peak_F,
     }
