@@ -59,7 +59,7 @@ GUIDED_STEPS = [
         ),
         "summary": "Explore how nozzle throat sizing controls both thrust magnitude and the risk of freezing the propellant valve.",
         "prompt": "Trigger a **Valve Freeze Warning (< 230 K)** by enlarging the throat diameter or using the Freeze Risk preset.",
-        "hint": "Click the **Freeze Risk** preset in the sidebar, or enable Advanced Controls and set Throat Diameter ≥ 1.8 mm.",
+        "hint": "Click the **Freeze Risk** preset in the sidebar, or open **Nozzle Geometry** in the sidebar and set Throat Diameter ≥ 1.8 mm.",
         "check": lambda cfg: cfg["min_T"] < 230.0 or cfg["d_throat_mm"] >= 1.8,
         "live_metrics": lambda res, cfg: f"Throat d*: `{cfg['d_throat_mm']:.1f} mm`  |  Peak Thrust: `{res['F'].max():.2f} N`  |  Valve Freeze: `{'YES (< 230 K)' if res['T'].min() < 230 else 'NO'}`",
     },

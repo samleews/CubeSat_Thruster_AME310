@@ -165,24 +165,15 @@ with st.sidebar.expander("🛰️ Spacecraft Bus", expanded=False):
         st.session_state.T_init_K = T_init_K
         st.session_state.m_dry = m_dry
 
-# --- Sidebar: Optional Advanced Mode ---
-advanced_mode = st.sidebar.toggle("⚙️ Advanced Controls", value=False)
+# --- Sidebar: Pre-Collapsed Advanced Sections ---
+with st.sidebar.expander("🧪 Propellant & Thermal Properties", expanded=False):
+    gas_key = st.selectbox("Propellant Gas", list(PROPELLANTS.keys()), key="gas_key")
+    Q_tank_wall = st.slider("Ambient Tank Wall Heating [W]", 0.0, 10.0, key="Q_tank_wall", step=0.5)
 
-if advanced_mode:
-    with st.sidebar.expander("🧪 Propellant & Thermal Properties", expanded=True):
-        gas_key = st.selectbox("Propellant Gas", list(PROPELLANTS.keys()), key="gas_key")
-        Q_tank_wall = st.slider("Ambient Tank Wall Heating [W]", 0.0, 10.0, key="Q_tank_wall", step=0.5)
-
-    with st.sidebar.expander("🚀 Nozzle Geometry", expanded=False):
-        d_throat_mm = st.slider("Nozzle Throat Diameter [mm]", 0.6, 3.0, key="d_throat_mm", step=0.1)
-        area_ratio = st.slider("Expansion Ratio (Ae/A*)", 5.0, 100.0, key="area_ratio", step=5.0)
-        eta_nozzle = st.slider("Nozzle Efficiency η_N", 0.70, 1.00, key="eta_nozzle", step=0.01, disabled=in_mission)
-else:
-    gas_key = st.session_state.gas_key
-    Q_tank_wall = st.session_state.Q_tank_wall
-    d_throat_mm = st.session_state.d_throat_mm
-    area_ratio = st.session_state.area_ratio
-    eta_nozzle = st.session_state.eta_nozzle
+with st.sidebar.expander("🚀 Nozzle Geometry", expanded=False):
+    d_throat_mm = st.slider("Nozzle Throat Diameter [mm]", 0.6, 3.0, key="d_throat_mm", step=0.1)
+    area_ratio = st.slider("Expansion Ratio (Ae/A*)", 5.0, 100.0, key="area_ratio", step=5.0)
+    eta_nozzle = st.slider("Nozzle Efficiency η_N", 0.70, 1.00, key="eta_nozzle", step=0.01, disabled="in_mission")
 
 Q_heater = Q_heater_val if use_heater else 0.0
 gas = get_propellant(gas_key)
