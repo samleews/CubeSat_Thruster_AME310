@@ -116,7 +116,7 @@ else:
     st.sidebar.info(
         f"🔒 **Mission Bus Locked**\n\n"
         f"Tank Volume ({m_cfg['V_tank_L']:.1f} L), Initial Pressure ({m_cfg['P_init_MPa']:.0f} MPa), "
-        f"Initial Temp ({m_cfg['T_init_K']:.0f} K), and Dry Mass ({m_cfg['m_dry']:.0f} kg) are fixed by the CubeSat chassis."
+        f"Initial Temp ({m_cfg['T_init_K']:.0f} K), Dry Mass ({m_cfg['m_dry']:.0f} kg), and Nozzle Efficiency ({m_cfg['eta_nozzle']:.2f}) are fixed by the CubeSat chassis."
     )
 
 # --- Sidebar: Core Controls (Always Visible) ---

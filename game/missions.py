@@ -11,9 +11,9 @@ MISSIONS = {
         "T_init_K": 295.0,
         "eta_nozzle": 0.92,
         "briefing": (
-            "Raise a **12 kg CubeSat** (locked 4.0 L tank at 20 MPa) from a **400 km** circular orbit to **450 km** "
-            "using a two-burn Hohmann transfer (Burn 1 → 46.4 min Coast → Burn 2). Tune your propellant, nozzle, "
-            "and thermal controls to complete both burns without freezing the thruster valve or exhausting your reserve."
+            "Raise a **12 kg CubeSat** (locked 4.0 L tank at 20 MPa, flight-qualified $\\eta_N = 0.92$ nozzle) "
+            "from a **400 km** circular orbit to **450 km** using a two-burn Hohmann transfer (Burn 1 → 46.4 min Coast → Burn 2). "
+            "Tune your propellant, nozzle throat, and thermal controls to complete both burns without freezing the valve or exhausting your reserve."
         ),
         "constraints": {
             "min_T_K": 230.0,
@@ -32,8 +32,8 @@ MISSIONS = {
         "eta_nozzle": 0.88,
         "briefing": (
             "Transfer a **10 kg CubeSat** (locked 3.5 L tank at 20 MPa) from **400 km** to **500 km** (higher $\\Delta v$ demand). "
-            "Your solar array limits the Resistojet Heater to **≤ 35 W**. Use coast-phase thermal recovery "
-            "and propellant selection wisely to avoid valve freezing."
+            "A compact, higher-divergence nozzle limits efficiency to **$\\eta_N = 0.88$**, and your solar array caps the Resistojet Heater at **≤ 35 W**. "
+            "Use coast-phase thermal recovery and propellant selection wisely to avoid valve freezing."
         ),
         "constraints": {
             "min_T_K": 230.0,
@@ -52,7 +52,8 @@ MISSIONS = {
         "eta_nozzle": 0.85,
         "briefing": (
             "Execute a tight **400 km → 435 km** transfer for a heavy **15 kg CubeSat** (locked 3.0 L tank at 22 MPa) "
-            "while keeping tank temperature strictly above **245 K** (strict seal margin) and finishing with **≥ 15%** propellant remaining."
+            "equipped with a 3D-printed micro-nozzle (**$\\eta_N = 0.85$** due to viscous wall losses). "
+            "Keep tank temperature strictly above **245 K** (seal margin) and finish with **≥ 15%** propellant remaining."
         ),
         "constraints": {
             "min_T_K": 245.0,
