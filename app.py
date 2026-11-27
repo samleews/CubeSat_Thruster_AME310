@@ -173,7 +173,7 @@ with st.sidebar.expander("🧪 Propellant & Thermal Properties", expanded=False)
 with st.sidebar.expander("🚀 Nozzle Geometry", expanded=False):
     d_throat_mm = st.slider("Nozzle Throat Diameter [mm]", 0.6, 3.0, key="d_throat_mm", step=0.1)
     area_ratio = st.slider("Expansion Ratio (Ae/A*)", 5.0, 100.0, key="area_ratio", step=5.0)
-    eta_nozzle = st.slider("Nozzle Efficiency η_N", 0.70, 1.00, key="eta_nozzle", step=0.01, disabled="in_mission")
+    eta_nozzle = st.slider("Nozzle Efficiency η_N", 0.70, 1.00, key="eta_nozzle", step=0.01, disabled=in_mission)
 
 Q_heater = Q_heater_val if use_heater else 0.0
 gas = get_propellant(gas_key)
