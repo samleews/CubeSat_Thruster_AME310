@@ -9,7 +9,7 @@ MISSIONS = {
         "V_tank_L": 4.0,
         "P_init_MPa": 20.0,
         "T_init_K": 295.0,
-        "eta_nozzle": 0.90,
+        "eta_nozzle": 0.92,
         "briefing": (
             "Raise a **12 kg CubeSat** (locked 4.0 L tank at 20 MPa) from a **400 km** circular orbit to **450 km** "
             "using a two-burn Hohmann transfer (Burn 1 → 46.4 min Coast → Burn 2). Tune your propellant, nozzle, "
@@ -29,7 +29,7 @@ MISSIONS = {
         "V_tank_L": 3.5,
         "P_init_MPa": 20.0,
         "T_init_K": 290.0,
-        "eta_nozzle": 0.90,
+        "eta_nozzle": 0.88,
         "briefing": (
             "Transfer a **10 kg CubeSat** (locked 3.5 L tank at 20 MPa) from **400 km** to **500 km** (higher $\\Delta v$ demand). "
             "Your solar array limits the Resistojet Heater to **≤ 35 W**. Use coast-phase thermal recovery "
@@ -49,7 +49,7 @@ MISSIONS = {
         "V_tank_L": 3.0,
         "P_init_MPa": 22.0,
         "T_init_K": 290.0,
-        "eta_nozzle": 0.90,
+        "eta_nozzle": 0.85,
         "briefing": (
             "Execute a tight **400 km → 435 km** transfer for a heavy **15 kg CubeSat** (locked 3.0 L tank at 22 MPa) "
             "while keeping tank temperature strictly above **245 K** (strict seal margin) and finishing with **≥ 15%** propellant remaining."
