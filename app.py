@@ -176,7 +176,7 @@ if advanced_mode:
     with st.sidebar.expander("🚀 Nozzle Geometry", expanded=False):
         d_throat_mm = st.slider("Nozzle Throat Diameter [mm]", 0.6, 3.0, key="d_throat_mm", step=0.1)
         area_ratio = st.slider("Expansion Ratio (Ae/A*)", 5.0, 100.0, key="area_ratio", step=5.0)
-        eta_nozzle = st.slider("Nozzle Efficiency η_N", 0.70, 1.00, key="eta_nozzle", step=0.01)
+        eta_nozzle = st.slider("Nozzle Efficiency η_N", 0.70, 1.00, key="eta_nozzle", step=0.01, disabled=in_mission)
 else:
     gas_key = st.session_state.gas_key
     Q_tank_wall = st.session_state.Q_tank_wall
