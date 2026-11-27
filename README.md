@@ -2,7 +2,7 @@
 
 An interactive virtual thermodynamics laboratory modeling a **Category 6 Integrated SSSF + Transient System**: a variable-mass pressurized CubeSat propellant tank coupled to Steady-State Steady-Flow (SSSF) propulsion hardware (optional isenthalpic pressure regulator, optional electrical resistojet heater, and a choked converging-diverging vacuum nozzle).
 
-🚀 **Live App:** [Launch Virtual Lab on Streamlit Community Cloud](https://YOUR-APP-URL.streamlit.app)
+**Live App:** [Launch Virtual Lab on Streamlit Community Cloud](https://cubesatthrusterame310-lzfcrvyux5qb8kdlqt8q4r.streamlit.app/)
 
 ---
 
